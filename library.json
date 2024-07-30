@@ -1,6 +1,6 @@
 {
     "name": "ESP_Git_OTA",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "Over The Air update library for ESP32 that uses GitHub releases",
     "keywords": "OTA, Github, ESP32",
     "repository":
