@@ -8,6 +8,7 @@ This is Over The Air update library for `ESP32` that uses `GitHub` releases as t
 - 📝 [Usage](#usage)
 - ➕ [Methods](#methods)
   - 🎉 [init GithubReleaseOTA Object](#init-githubreleaseota-object)
+    - 🚨[Token hint](#token-hint)
   - 🔒️ [Setup CA Certificate](#%EF%B8%8Fsetup-ca-certificate)
   - 🏷️ [Get Tag](#%EF%B8%8Fget-tag)
   - 🔖 [Get Release](#get-release-githubrelease-object)
@@ -43,7 +44,7 @@ bool readyForUpdate = false;
 
 // Public repository
 GithubReleaseOTA ota("username", "repository");
-// Private repository
+// Private repository See Token hint https://github.com/Hsun1031/ESP32_Git_OTA?tab=readme-ov-file#token-hint
 // GithubReleaseOTA ota("username", "repository", "token");
 
 void setup() {
