@@ -185,7 +185,7 @@ GithubReleaseAsset GithubReleaseOTA::getAssetByname(GithubRelease release, const
  * @brief Flash firmware
  * 
  * @param asset `GithubReleaseAsset` Github Release Asset Object
- * @return `int` OTA Status, `OTA_SUSSES`:0, `OTA_NULL_URL`:1, `OTA_CONNECT_ERROR`:2, `OTA_BEGIN_ERROR`:3, `OTA_WRITE_ERROR`:4, `OTA_END_ERROR`:5
+ * @return `int` OTA Status, `OTA_SUCCESS`:0, `OTA_NULL_URL`:1, `OTA_CONNECT_ERROR`:2, `OTA_BEGIN_ERROR`:3, `OTA_WRITE_ERROR`:4, `OTA_END_ERROR`:5
  */
 int GithubReleaseOTA::flashFirmware(GithubReleaseAsset asset) {
     return GithubReleaseOTA::flashByAssetId(asset.id, FLASH_TYPE_FIRMWARE);
@@ -196,7 +196,7 @@ int GithubReleaseOTA::flashFirmware(GithubReleaseAsset asset) {
  * 
  * @param release `GithubRelease` Github Release Object
  * @param name `const char*` Asset Name
- * @return `int` OTA Status, `OTA_SUSSES`:0, `OTA_NULL_URL`:1, `OTA_CONNECT_ERROR`:2, `OTA_BEGIN_ERROR`:3, `OTA_WRITE_ERROR`:4, `OTA_END_ERROR`:5
+ * @return `int` OTA Status, `OTA_SUCCESS`:0, `OTA_NULL_URL`:1, `OTA_CONNECT_ERROR`:2, `OTA_BEGIN_ERROR`:3, `OTA_WRITE_ERROR`:4, `OTA_END_ERROR`:5
  */
 int GithubReleaseOTA::flashFirmware(GithubRelease release, const char* name) {
     GithubReleaseAsset asset = getAssetByname(release, name);
@@ -210,7 +210,7 @@ int GithubReleaseOTA::flashFirmware(GithubRelease release, const char* name) {
  * @brief Flash SPIFFS
  * 
  * @param asset `GithubReleaseAsset` Github Release Asset Object
- * @return `int` OTA Status, `OTA_SUSSES`:0, `OTA_NULL_URL`:1, `OTA_CONNECT_ERROR`:2, `OTA_BEGIN_ERROR`:3, `OTA_WRITE_ERROR`:4, `OTA_END_ERROR`:5
+ * @return `int` OTA Status, `OTA_SUCCESS`:0, `OTA_NULL_URL`:1, `OTA_CONNECT_ERROR`:2, `OTA_BEGIN_ERROR`:3, `OTA_WRITE_ERROR`:4, `OTA_END_ERROR`:5
  */
 int GithubReleaseOTA::flashSpiffs(GithubReleaseAsset asset) {
     return GithubReleaseOTA::flashByAssetId(asset.id, FLASH_TYPE_SPIFFS);
@@ -221,7 +221,7 @@ int GithubReleaseOTA::flashSpiffs(GithubReleaseAsset asset) {
  * 
  * @param release `GithubRelease` Github Release Object
  * @param name `const char*` Asset Name
- * @return `int` OTA Status, `OTA_SUSSES`:0, `OTA_NULL_URL`:1, `OTA_CONNECT_ERROR`:2, `OTA_BEGIN_ERROR`:3, `OTA_WRITE_ERROR`:4, `OTA_END_ERROR`:5
+ * @return `int` OTA Status, `OTA_SUCCESS`:0, `OTA_NULL_URL`:1, `OTA_CONNECT_ERROR`:2, `OTA_BEGIN_ERROR`:3, `OTA_WRITE_ERROR`:4, `OTA_END_ERROR`:5
  */
 int GithubReleaseOTA::flashSpiffs(GithubRelease release, const char* name) {
     GithubReleaseAsset asset = getAssetByname(release, name);
@@ -236,7 +236,7 @@ int GithubReleaseOTA::flashSpiffs(GithubRelease release, const char* name) {
  * 
  * @param assetId `int` Asset ID
  * @param flashType `int` Flash Type, `U_FLASH` or `U_SPIFFS`
- * @return `int` OTA Status, `OTA_SUSSES`:0, `OTA_NULL_URL`:1, `OTA_CONNECT_ERROR`:2, `OTA_BEGIN_ERROR`:3, `OTA_WRITE_ERROR`:4, `OTA_END_ERROR`:5
+ * @return `int` OTA Status, `OTA_SUCCESS`:0, `OTA_NULL_URL`:1, `OTA_CONNECT_ERROR`:2, `OTA_BEGIN_ERROR`:3, `OTA_WRITE_ERROR`:4, `OTA_END_ERROR`:5
  */
 int GithubReleaseOTA::flashByAssetId(int assetId, int flashType) {
     int urlSize = snprintf(NULL, 0, GITHUB_API_RELEASE_ASSETS_URL, this->releaseUrl, String(assetId)) + 1;
@@ -290,7 +290,7 @@ int GithubReleaseOTA::flashByAssetId(int assetId, int flashType) {
 
         client.end();
         free(url);
-        return OTA_SUSSES;
+        return OTA_SUCCESS;
     }
 }
 

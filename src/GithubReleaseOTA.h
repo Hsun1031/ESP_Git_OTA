@@ -21,7 +21,7 @@
 
     #define X_GITHUB_API_VERSION "2022-11-28"
 
-    #define OTA_SUSSES        0
+    #define OTA_SUCCESS       0
     #define OTA_NULL_URL      1
     #define OTA_CONNECT_ERROR 2
     #define OTA_BEGIN_ERROR   3
