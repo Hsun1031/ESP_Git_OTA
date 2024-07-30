@@ -274,7 +274,7 @@ int GithubReleaseOTA::flashByAssetId(int assetId, int flashType) {
 
         // Write the firmware update data to the device
         int updateSize = Update.writeStream(client.getStream());
-        Serial.println("updateSize: " + String(updateSize));
+
         if (updateSize != size) {
             client.end();
             free(url);
