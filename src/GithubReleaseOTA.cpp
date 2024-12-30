@@ -280,24 +280,32 @@ int GithubReleaseOTA::flashByAssetId(int assetId, int flashType) {
     size_t written = 0;
     const size_t chunkSize = 1024; // Set chunk size
     uint8_t buffer[chunkSize];
+    int lastProgress = -1;
 
     while (written < size) {
-    size_t available = stream.available();
-    if (available > 0) {
-        size_t readSize = stream.readBytes(buffer, min(available, chunkSize));
-        if (readSize > 0) {
-            if (Update.write(buffer, readSize) != readSize) {
-                ESP_LOGE("GithubReleaseOTA", "Error writing chunk");
-                client.end();
-                free(url);
-                return OTA_WRITE_ERROR;
+        size_t available = stream.available();
+        if (available > 0) {
+            size_t readSize = stream.readBytes(buffer, min(available, chunkSize));
+            if (readSize > 0) {
+                if (Update.write(buffer, readSize) != readSize) {
+                    ESP_LOGE("GithubReleaseOTA", "Error writing chunk");
+                    client.end();
+                    free(url);
+                    return OTA_WRITE_ERROR;
+                }
+                written += readSize;
+                ESP_LOGI("GithubReleaseOTA", "Written %d/%d bytes", written, size);
             }
-        written += readSize;
-        ESP_LOGI("GithubReleaseOTA", "Written %d/%d bytes", written, size);
+
+            int progress = (written * 100) / size;
+            if (progress != lastProgress) {
+                if (this->progressCallback) {
+                    this->progressCallback(progress);
+                }
+            lastProgress = progress;
+            }
         }
-    }
-    // Allow other tasks to run
-    delay(1);
+        delay(1);
     }
 
     if (!Update.end()) {
