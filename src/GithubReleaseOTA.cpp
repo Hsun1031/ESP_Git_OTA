@@ -247,7 +247,7 @@ int GithubReleaseOTA::flashByAssetId(int assetId, int flashType) {
     }
 
     snprintf(url, urlSize, GITHUB_API_RELEASE_ASSETS_URL, this->releaseUrl, String(assetId)) + 1;
-    
+
     HTTPClient client;
     if (this->ca != NULL)
         client.begin(url, this->ca);
@@ -261,37 +261,64 @@ int GithubReleaseOTA::flashByAssetId(int assetId, int flashType) {
     client.addHeader("X-GitHub-Api-Version", X_GITHUB_API_VERSION);
 
     if (client.GET() != HTTP_CODE_OK) {
+        ESP_LOGE("GithubReleaseOTA", "Failed to connect to GitHub API");
         client.end();
         free(url);
         return OTA_CONNECT_ERROR;
-    } else {
-        int size = client.getSize();
-        if (!Update.begin(size, flashType)) {
-            client.end();
-            free(url);
-            return OTA_BEGIN_ERROR;
-        }
+    }
 
-        // Write the firmware update data to the device
-        int updateSize = Update.writeStream(client.getStream());
-
-        if (updateSize != size) {
-            client.end();
-            free(url);
-            return OTA_WRITE_ERROR;
-        }
-
-        // End the firmware update process
-        if (!Update.end()) {
-            client.end();
-            free(url);
-            return OTA_END_ERROR;
-        }
-
+    int size = client.getSize();
+    if (!Update.begin(size, flashType)) {
+        ESP_LOGE("GithubReleaseOTA", "Failed to begin OTA update");
         client.end();
         free(url);
-        return OTA_SUCCESS;
+        return OTA_BEGIN_ERROR;
     }
+
+    // Use the HTTPClient's stream directly
+    Stream &stream = client.getStream();
+    size_t written = 0;
+    const size_t chunkSize = 1024; // Set chunk size
+    uint8_t buffer[chunkSize];
+    int lastProgress = -1;
+
+    while (written < size) {
+        size_t available = stream.available();
+        if (available > 0) {
+            size_t readSize = stream.readBytes(buffer, min(available, chunkSize));
+            if (readSize > 0) {
+                if (Update.write(buffer, readSize) != readSize) {
+                    ESP_LOGE("GithubReleaseOTA", "Error writing chunk");
+                    client.end();
+                    free(url);
+                    return OTA_WRITE_ERROR;
+                }
+                written += readSize;
+                ESP_LOGI("GithubReleaseOTA", "Written %d/%d bytes", written, size);
+            }
+
+            int progress = (written * 100) / size;
+            if (progress != lastProgress) {
+                if (this->progressCallback) {
+                    this->progressCallback(progress);
+                }
+            lastProgress = progress;
+            }
+        }
+        delay(1);
+    }
+
+    if (!Update.end()) {
+        ESP_LOGE("GithubReleaseOTA", "Failed to end OTA update");
+        client.end();
+        free(url);
+        return OTA_END_ERROR;
+    }
+
+    ESP_LOGI("GithubReleaseOTA", "OTA update successful");
+    client.end();
+    free(url);
+    return OTA_SUCCESS;
 }
 
 /**

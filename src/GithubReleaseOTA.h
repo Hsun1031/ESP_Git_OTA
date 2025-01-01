@@ -97,6 +97,7 @@
             char* releaseUrl = NULL;
             char* token = NULL;
             char* ca =  NULL;
+            void (*progressCallback)(int) = nullptr;
 
         public:
             GithubReleaseOTA(const char* owner, const char* repo, const char* token = (const char*)NULL);
@@ -126,6 +127,8 @@
             void freeRelease(GithubRelease& release);
             void freeAuthor(GithubAuthor& author);
             void freeReleaseAsset(GithubReleaseAsset& asset);
+
+            void setProgressCallback(void (*callback)(int)) { this->progressCallback = callback; }
 
         private:
             String connectGithub(const char* url, int *code);
